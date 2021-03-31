@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import ReactMapGl, {Marker} from 'react-map-gl';
+import ReactMapGl, {Marker, Popup} from 'react-map-gl';
 import Skateboard_Parks from "./data/Skateboard_Parks.json";
 //require('dotenv').config();
 
@@ -16,7 +16,7 @@ function App() {
 
   const [selectedPark, setSelectedPark] = useState(null);
   //console.log({Skateboard_Parks});
-  console.log(selectedPark.properties.NAME);
+  //console.log(selectedPark.properties.NAME);
   console.log({selectedPark});
 
   return (
@@ -39,7 +39,10 @@ function App() {
         </Marker>
       ))}
       {selectedPark ? (
-        <Popup>
+        <Popup
+          latitude={selectedPark.geometry.coordinates[1]}
+          longitude={selectedPark.geometry.coordinates[0]}
+          closeButton={false}>
           <div>
             {selectedPark.properties.NAME}
           </div>
