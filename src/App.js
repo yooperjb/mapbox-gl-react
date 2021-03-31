@@ -1,24 +1,51 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import ReactMapGl, {Marker} from 'react-map-gl';
+import Skateboard_Parks from "./data/Skateboard_Parks.json";
+//require('dotenv').config();
 
 function App() {
+
+  const [viewport, setViewport] = useState({
+    latitude: 45.4211,
+    longitude: -75.6903,
+    zoom: 10,
+    width: '100vw',
+    height: '100vh'
+  });
+
+  const [selectedPark, setSelectedPark] = useState(null);
+  //console.log({Skateboard_Parks});
+  console.log(selectedPark.properties.NAME);
+  console.log({selectedPark});
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ReactMapGl 
+      {...viewport}
+      mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
+      //mapStyle="" can put a different map style link here
+      onViewportChange={setViewport}
+    >
+      {Skateboard_Parks.features.map((park) => (
+        <Marker key={park.properties.PARK_ID}
+          latitude={park.geometry.coordinates[1]}
+          longitude={park.geometry.coordinates[0]}>
+          <button className="marker-btn" onClick={(e) => {
+            e.preventDefault();
+            setSelectedPark(park)
+          }}>
+            <img src="skateboarding.svg" alt="Skate Park Icon" />
+          </button>
+        </Marker>
+      ))}
+      {selectedPark ? (
+        <Popup>
+          <div>
+            {selectedPark.properties.NAME}
+          </div>
+        </Popup>
+      ) : null }
+    </ReactMapGl>
   );
 }
 
