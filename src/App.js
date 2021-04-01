@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import ReactMapGl, {Marker, Popup} from 'react-map-gl';
 import Skateboard_Parks from "./data/Skateboard_Parks.json";
@@ -14,7 +14,23 @@ function App() {
     height: '100vh'
   });
 
+  // for popup
   const [selectedPark, setSelectedPark] = useState(null);
+
+  // using escape key to close popup
+  useEffect(() => {
+    const listener = e => {
+      if (e.key === "Escape") {
+        setSelectedPark(null);
+      }
+    };
+    window.addEventListener("keydown", listener);
+
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, []);
+
   //console.log({Skateboard_Parks});
   //console.log(selectedPark.properties.NAME);
   console.log({selectedPark});
@@ -42,9 +58,11 @@ function App() {
         <Popup
           latitude={selectedPark.geometry.coordinates[1]}
           longitude={selectedPark.geometry.coordinates[0]}
-          closeButton={false}>
+          closeButton={false}
+          onClose={() => setSelectedPark(null)}>
           <div>
-            {selectedPark.properties.NAME}
+            <h3>{selectedPark.properties.NAME}</h3>
+            <p>{selectedPark.properties.DESCRIPTION}</p>
           </div>
         </Popup>
       ) : null }
